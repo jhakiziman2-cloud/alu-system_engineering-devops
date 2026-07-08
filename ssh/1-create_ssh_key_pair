@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# The script below will create an ssh key and store it to a specified file
+
+ssh-keygen -t rsa -b 4096 -f school -N "Serverkey" 
