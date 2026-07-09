@@ -1,3 +1,3 @@
 Host *
-    IdentityFile ~/alu-system_engineering-devops/ssh/school
+    IdentityFile~/.ssh/school
     PasswordAuthentication no
