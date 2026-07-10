@@ -1,14 +1,37 @@
 #!/usr/bin/env bash
-# redirection
-apt-get update -y
-apt-get install -y nginx
+# Configure Nginx 
 
-NGINX_CONF="/etc/nginx/sites-available/default"
+sudo apt-get update -y
 
 
-if ! grep -q "location /redirect_me" "$NGINX_CONF"; then
-    sed -i '0,/^}/s//\tlocation \/redirect_me {\n\t\treturn 301 https:\/\/www.youtube.com\/watch?v=QH2-TGUlwu4;\n\t}\n}/' "$NGINX_CONF"
-fi
+sudo apt-get install -y nginx
 
 
-service nginx restart
+sudo sh -c "cat > /etc/nginx/sites-available/default <<'EOF'
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+    server_name _;
+
+    location = /redirect_me {
+        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+    }
+
+    location = /redirect_me/ {
+        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+    }
+
+    location / {
+        return 200 'Holberton School for the win!';
+    }
+}
+EOF"
+
+
+sudo nginx -t
+
+
+sudo service nginx restart
