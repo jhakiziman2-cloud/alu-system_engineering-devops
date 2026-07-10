@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # Configure Nginx with a redirect
 
-
 sudo apt-get update -y
 
 
@@ -17,17 +16,18 @@ server {
     index index.html;
     server_name _;
 
-    location /redirect_me/ {
+    location /redirect_me {
         return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
     }
 
     location / {
-        return 200 'Holberton School for the win!';
+        return 200 'Holberton School';
     }
 }
 EOF"
 
 
 sudo nginx -t
+
 
 sudo service nginx restart
