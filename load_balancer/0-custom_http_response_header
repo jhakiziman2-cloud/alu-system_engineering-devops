@@ -1,28 +1,19 @@
 #!/usr/bin/env bash
-# Configure Nginx with a custom response header
+# Configuring Nginx on a fresh Ubuntu machine to inject a custom
 
 set -e
 
-apt-get update -y
+
+apt-get update -y || true
 apt-get install -y nginx
 
-cat > /etc/nginx/sites-available/default <<'EOF'
-server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
+NGINX_CONF="/etc/nginx/nginx.conf"
+HEADER_LINE="add_header X-Served-By \$hostname always;"
 
-    root /var/www/html;
-    index index.html index.htm index.nginx-debian.html;
 
-    server_name _;
-
-    add_header X-Served-By $hostname;
-
-    location / {
-        try_files $uri $uri/ =404;
-    }
-}
-EOF
+if ! grep -qF "X-Served-By" "$NGINX_CONF"; then
+    sed -i "/http {/a \\\t${HEADER_LINE}" "$NGINX_CONF"
+fi
 
 nginx -t
-systemctl restart nginx
+service nginx restart
