@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Install and configure HAProxy
+
+sudo apt-get update -y
+sudo apt-get install -y haproxy
+
+cat <<EOF | sudo tee -a /etc/haproxy/haproxy.cfg
+
+frontend balancer_http_in
+    bind *:80
+    mode http
+    default_backend balancer-backend
+
+backend balancer-backend
+    mode http
+    balance roundrobin
+    server 7118-web-01 100.24.4.34 check
+    server 7118-web-02 44.201.163.226 check
+EOF
+
+echo "ENABLED=1" | sudo tee /etc/default/haproxy
+
+sudo service haproxy restart
